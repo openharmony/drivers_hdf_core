@@ -204,6 +204,8 @@ static int32_t SpiTransferRebuildMsgs(struct HdfSBuf *data, struct SpiMsg **ppms
 
     if (SpiMsgsRwProcess(data, count, &tmpFlag, msgs, &lenReply) != HDF_SUCCESS) {
         HDF_LOGE("SpiTransferRebuildMsgs: SpiMsgsRwProcess fail!");
+        OsalMemFree(msgs);
+        msgs = NULL;
         return HDF_FAILURE;
     }
 
@@ -211,6 +213,8 @@ static int32_t SpiTransferRebuildMsgs(struct HdfSBuf *data, struct SpiMsg **ppms
         bufReply = OsalMemCalloc(lenReply);
         if (bufReply == NULL) {
             HDF_LOGE("SpiTransferRebuildMsgs: memcalloc fail!");
+            OsalMemFree(msgs);
+            msgs = NULL;
             return HDF_ERR_MALLOC_FAIL;
         }
         for (i = 0, buf = bufReply; i < count && buf < (bufReply + lenReply); i++) {
