@@ -11,7 +11,7 @@
 
 #define HDF_LOG_TAG HDF_ETH_CORE
 
-static pthread_mutex_t g_ethChipDriverMutex = PTHREAD_MUTEX_ININTIALIZER;
+static pthread_mutex_t g_ethChipDriverMutex = PTHREAD_MUTEX_INITIALIZER;
 static struct HdfEthChipDriverFactory *g_ethChipDriverFactory[MAX_CHIPDRIVER_COUNT] = {NULL};
 
 static struct HdfEthChipDriverFactory *HdfEthGetChipDriverByName(const char *driverName)
@@ -26,12 +26,12 @@ static struct HdfEthChipDriverFactory *HdfEthGetChipDriverByName(const char *dri
         if (g_ethChipDriverFactory[i] != NULL && g_ethChipDriverFactory[i]->driverName != NULL) {
             struct HdfEthChipDriverFactory *factory = g_ethChipDriverFactory[i];
             if (strcmp(factory->driverName, driverName) == 0) {
-                pthread_mutex_lock(&g_ethChipDriverMutex);
+                pthread_mutex_unlock(&g_ethChipDriverMutex);
                 return factory;
             }
         }
     }
-    pthread_mutex_lock(&g_ethChipDriverMutex);
+    pthread_mutex_unlock(&g_ethChipDriverMutex);
     return NULL;
 }
 
