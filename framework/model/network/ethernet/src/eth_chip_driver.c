@@ -8,6 +8,7 @@
 
 #include "eth_chip_driver.h"
 #include "hdf_core_log.h"
+#include <pthread.h>
 
 #define HDF_LOG_TAG HDF_ETH_CORE
 
