@@ -8,9 +8,11 @@
 
 #include "eth_chip_driver.h"
 #include "hdf_core_log.h"
+#include <pthread.h>
 
 #define HDF_LOG_TAG HDF_ETH_CORE
 
+static pthread_mutex_t g_ethChipDriverMutex = PTHREAD_MUTEX_INITIALIZER;
 static struct HdfEthChipDriverFactory *g_ethChipDriverFactory[MAX_CHIPDRIVER_COUNT] = {NULL};
 
 static struct HdfEthChipDriverFactory *HdfEthGetChipDriverByName(const char *driverName)
@@ -20,15 +22,17 @@ static struct HdfEthChipDriverFactory *HdfEthGetChipDriverByName(const char *dri
         HDF_LOGE("%s fail: drivreName is NULL", __func__);
         return NULL;
     }
-
+    pthread_mutex_lock(&g_ethChipDriverMutex);
     for (i = 0; i < MAX_CHIPDRIVER_COUNT; i++) {
         if (g_ethChipDriverFactory[i] != NULL && g_ethChipDriverFactory[i]->driverName != NULL) {
             struct HdfEthChipDriverFactory *factory = g_ethChipDriverFactory[i];
             if (strcmp(factory->driverName, driverName) == 0) {
+                pthread_mutex_unlock(&g_ethChipDriverMutex);
                 return factory;
             }
         }
     }
+    pthread_mutex_unlock(&g_ethChipDriverMutex);
     return NULL;
 }
 
@@ -43,13 +47,16 @@ static int32_t HdfEthRegChipDriver(struct HdfEthChipDriverFactory *obj)
         HDF_LOGW("%s: chipDriver factory is already registered. name = %s", __func__, obj->driverName);
         return HDF_FAILURE;
     }
+    pthread_mutex_lock(&g_ethChipDriverMutex);
     for (index = 0; index < MAX_CHIPDRIVER_COUNT; index++) {
         if (g_ethChipDriverFactory[index] == NULL) {
             g_ethChipDriverFactory[index] = obj;
             HDF_LOGI("%s:Chip driver %s registered.", __func__, obj->driverName);
+            pthread_mutex_unlock(&g_ethChipDriverMutex);
             return HDF_SUCCESS;
         }
     }
+    pthread_mutex_unlock(&g_ethChipDriverMutex);
     HDF_LOGE("%s: Factory table is NULL", __func__);
     return HDF_FAILURE;
 }
