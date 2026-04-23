@@ -34,6 +34,12 @@ config DRIVERS_HDF_SENSOR_ACCEL_MXC6655XA
     depends on DRIVERS_HDF_SENSOR_ACCEL
     help
       Answer Y to enable HDF accel mxc6655xa sensor driver.
+config DRIVERS_HDF_SENSOR_ACCEL_SC7A20
+    bool "Enable HDF accel sc7a20 sensor driver"
+    default n
+    depends on DRIVERS_HDF_SENSOR_ACCEL
+    help
+      Answer Y to enable HDF accel sc7a20 sensor driver.
 config DRIVERS_HDF_SENSOR_ACCEL_MIC6200
     bool "Enable HDF accel mic6200 sensor driver"
     default n
