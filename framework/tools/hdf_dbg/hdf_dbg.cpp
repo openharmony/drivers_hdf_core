@@ -6,7 +6,6 @@
  * See the LICENSE file in the root of this repository for complete details.
  */
 
-#include <algorithm>
 #include <hdf_io_service.h>
 #include <idevmgr_hdi.h>
 #include <iostream>
@@ -15,6 +14,7 @@
 #include <string>
 #include <string_ex.h>
 #include <vector>
+#include "str_to_int.h"
 
 #define HDF_LOG_TAG hdf_dbg
 
@@ -99,9 +99,7 @@ static void PrintHelp()
 static int StrToInt(std::string tempstr)
 {
     int32_t num = GET_INFO_FUNC_NUMS;
-    if (std::all_of(tempstr.begin(), tempstr.end(), ::isdigit)) {
-        num = std::stoi(tempstr);
-    }
+    num = ParseDbgInt(tempstr, num);
     return num;
 }
 
